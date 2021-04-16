@@ -59,7 +59,7 @@ module Cups
     end
 
     private
-    # Wrapper around {FFI::Cups#cupsGetDests2}
+    # Wrapper around {::FFI::Cups#cupsGetDests2}
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @param pointer [Pointer] pointer to the destinations
     # @return [Hash] hashmap of destination structs
@@ -88,14 +88,14 @@ module Cups
       return options
     end
 
-    # Wrapper around {FFI::Cups#cupsFreeDests}
+    # Wrapper around {::FFI::Cups#cupsFreeDests}
     # @param number_destinations [Integer]
     # @param pointer [Pointer] pointer to the destinations
     def self.cupsFreeDests(number_destinations, pointer)
       FFI::Cups.cupsFreeDests(number_destinations, pointer.get_pointer(0))
     end
 
-    # Wrapper around {FFI::Cups#cupsFreeOptions}
+    # Wrapper around {::FFI::Cups#cupsFreeOptions}
     # @param number_options [Integer]
     # @param pointer [Pointer] pointer to the options
     def self.cupsFreeOptions(number_options, pointer)

@@ -26,7 +26,7 @@ module Cups
       @instance
     end
     
-    # Wrapper around {FFI::Cups::Http#httpConnectEncrypt}
+    # Wrapper around {::FFI::Cups::Http#httpConnectEncrypt}
     # @deprecated Use {#httpConnect2} instead
     # @return [Pointer] a http pointer 
     def httpConnectEncrypt
@@ -36,7 +36,7 @@ module Cups
     end
     deprecate :httpConnectEncrypt, "This function is deprecated by CUPS, please use httpConnect2 instead", 2025, 12
 
-    # Wrapper around {FFI::Cups::Http#httpConnect2}
+    # Wrapper around {::FFI::Cups::Http#httpConnect2}
     # Creates a http connection to a print server
     # @return [Pointer] a http pointer
     def httpConnect2
@@ -46,7 +46,7 @@ module Cups
     end
 
     # Closes the http connection and autoreleases the pointer
-    # Wrapper around {FFI::Cups::Http#httpClose}
+    # Wrapper around {::FFI::Cups::Http#httpClose}
     # @param http (Pointer)
     def self.close(http)
       FFI::Cups::Http.httpClose(pointer)
