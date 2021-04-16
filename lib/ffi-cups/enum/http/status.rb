@@ -1,0 +1,50 @@
+module Cups::Enum
+  module HTTP
+    extend FFI::Library
+
+    Status = enum [
+      :http_error, -1,
+      :http_continue, 100,
+      :http_switching_protocols,
+      :http_ok, 200,
+      :http_created,
+      :http_accepted,
+      :http_not_authoritative,
+      :http_no_content,
+      :http_reset_content,
+      :http_partial_content,
+      :http_multiple_choices, 300,
+      :http_moved_permanently,
+      :http_moved_temporarily,
+      :http_see_other,
+      :http_not_modified,
+      :http_use_proxy,
+      :http_bad_request, 400,
+      :http_unauthorized,
+      :http_payment_required,
+      :http_forbidden,
+      :http_not_found,
+      :http_method_not_allowed,
+      :http_not_acceptable,
+      :http_proxy_authentication,
+      :http_request_timeout,
+      :http_conflict,
+      :http_gone,
+      :http_length_required,
+      :http_precondition,
+      :http_request_too_large,
+      :http_uri_too_long,
+      :http_unsupported_mediatype,
+      :http_requested_range,
+      :http_expectation_failed,
+      :http_upgrade_required, 426,
+      :http_server_error, 500,
+      :http_not_implemented,
+      :http_bad_gateway,
+      :http_service_unavailable,
+      :http_gateway_timeout,
+      :http_not_supported,
+      :http_authorization_canceled, 1000
+    ]
+  end
+end

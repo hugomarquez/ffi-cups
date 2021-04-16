@@ -1,0 +1,12 @@
+.bundle/
+log/
+pkg/
+*.gem
+
+# YARD
+.yardopts
+.yardoc
+doc/*
+
+# Byebug
+.byebug_history
