@@ -1,4 +1,6 @@
 # ffi-cups
+[![Gem Version](https://badge.fury.io/rb/ffi-cups.svg)](https://badge.fury.io/rb/ffi-cups)
+
 ffi-cups is a FFI wrapper around libcups providing access to the Cups API.
 It was written using Ruby 2.7.0.
 
