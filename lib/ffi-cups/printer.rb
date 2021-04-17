@@ -75,6 +75,18 @@ module Cups
       return destinations
     end
 
+    # Wrapper around {::FFI::Cups#cupsCheckDestSupported}
+    # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
+    # @param dest [Pointer] pointer to the destination
+    # @param option [String]
+    # @param value [String]
+    # @return [Boolean] true if supported, false otherwise
+    def self.cupsCheckDestSupported(connection=nil, dest, option, value)
+      info = FFI::Cups.cupsCopyDestInfo(connection, dest)
+      i = FFI::Cups.cupsCheckDestSupported(connection, dest, info, option, value)
+      return !i.zero?
+    end
+
     # Returns a destination's options
     # @param dest [Object] {Cups::Struct::Destination} object
     # @return [Hash] hash of destination' options as {Cups::Struct::Option}
