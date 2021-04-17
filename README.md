@@ -32,7 +32,13 @@ printers = Cups::Printer.get_destinations
 # [#<Cups::Printer:0x000055fe50b178e0 @name="HP_Officejet_J4500_series_ubuntu", @options={"device-uri"=>"ipps://HP%20Officejet%20J4500%20series%20%40%20ubuntu._ipps._tcp.local/cups", "printer-info"=>"HP Officejet J4500 series @ ubuntu", "printer-location"=>"", "printer-make-and-model"=>"HP Officejet j4585 All-in-one Printer", "printer-type"=>"16814110"}>, #<Cups::Printer:0x000055fe50b15798 @name="Virtual_PDF_Printer", @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3", "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", "job-priority"=>"50", "job-sheets"=>"none,none", "marker-change-time"=>"0", "number-up"=>"1", "printer-commands"=>"AutoConfigure,Clean,PrintSelfTestPage", "printer-info"=>"Virtual PDF Printer", "printer-is-accepting-jobs"=>"true", "printer-is-shared"=>"false", "printer-is-temporary"=>"false", "printer-location"=>"", "printer-make-and-model"=>"Generic CUPS-PDF Printer (w/ options)", "printer-state"=>"3", "printer-state-change-time"=>"1617884232", "printer-state-reasons"=>"none", "printer-type"=>"10547276", "printer-uri-supported"=>"ipp://localhost/printers/Virtual_PDF_Printer"}>]
 
 printer = Cups::Printer.get_destination("Virtual_PDF_Printer")
-#<Cups::Printer:0x0000560f1d4e0958 @name="Virtual_PDF_Printer", @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3", "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", "job-priority"=>"50", "job-sheets"=>"none,none", "marker-change-time"=>"0", "number-up"=>"1", "printer-commands"=>"AutoConfigure,Clean,PrintSelfTestPage", "printer-info"=>"Virtual PDF Printer", "printer-is-accepting-jobs"=>"true", "printer-is-shared"=>"false", "printer-is-temporary"=>"false", "printer-location"=>"", "printer-make-and-model"=>"Generic CUPS-PDF Printer (w/ options)", "printer-state"=>"3", "printer-state-change-time"=>"1617884232", "printer-state-reasons"=>"none", "printer-type"=>"10547276", "printer-uri-supported"=>"ipp://localhost/printers/Virtual_PDF_Printer"}> 
+# #<Cups::Printer:0x0000560f1d4e0958 @name="Virtual_PDF_Printer", @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3", "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", "job-priority"=>"50", "job-sheets"=>"none,none", "marker-change-time"=>"0", "number-up"=>"1", "printer-commands"=>"AutoConfigure,Clean,PrintSelfTestPage", "printer-info"=>"Virtual PDF Printer", "printer-is-accepting-jobs"=>"true", "printer-is-shared"=>"false", "printer-is-temporary"=>"false", "printer-location"=>"", "printer-make-and-model"=>"Generic CUPS-PDF Printer (w/ options)", "printer-state"=>"3", "printer-state-change-time"=>"1617884232", "printer-state-reasons"=>"none", "printer-type"=>"10547276", "printer-uri-supported"=>"ipp://localhost/printers/Virtual_PDF_Printer"}> 
+
+printer.state
+# :idle 
+
+printer.state_reasons
+# ["none"]
 
 ```
 
@@ -52,7 +58,7 @@ http = connection.httpConnect2
 # Get all printers from the remote connection
 remote_printers = Cups::Printer.get_destinations(http)
 
-# Close connection and release pointer
+# Close connection
 Cups::Connection.close(http)
 ```
 
