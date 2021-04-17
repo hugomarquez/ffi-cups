@@ -54,7 +54,7 @@ module FFI::Cups
   #   @param number [Integer] of destinations
   #   @param pointer [Pointer] to destinations
   # {https://www.cups.org/doc/cupspm.html#cupsFreeDests}
-  attach_function 'cupsFreeDests', [ :int, :pointer ], :void, blocking: true
+  attach_function 'cupsFreeDests', [:int, :pointer], :void, blocking: true
 
   # Prints a File
   # @overload cupsPrintFile(string, string, string, int, pointer)

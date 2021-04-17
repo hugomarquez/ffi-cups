@@ -30,32 +30,33 @@ module Cups
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     def self.get_destinations(connection=nil)
       pointer = FFI::MemoryPointer.new :pointer
-      destinations = cupsGetDests2(connection, pointer)
+      dests = cupsGetDests2(connection, pointer)
       printers = []
-      destinations.each do |k, d|
-        destination_opt = cupsOptions(d)
-        options = {}
-
-        destination_opt.each do |k, o|
-          options[o[:name].dup] = o[:value].dup
-        end
-
-        printer = Cups::Printer.new(d[:name].dup, options)
+      dests.each do |d|
+        printer = Cups::Printer.new(d[:name].dup, printer_options(d))
         printers.push(printer)
       end
-      cupsFreeDests(destinations.keys.count, pointer)
+      cupsFreeDests(dests.count, pointer)
       return printers
     end
 
     # Get a destination by name
     # @param name [String] name of the printer
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
+    # @return [Printer] a printer object
     def self.get_destination(name, connection=nil)
-      printers = get_destinations(connection)
-      printers.each do |p|
-        return p if p.name == name
-      end
-      raise "Destination with name: #{name} not found!" 
+      # Get all destinations with cupsGetDests2
+      dests = FFI::MemoryPointer.new :pointer
+      num_dests = FFI::Cups.cupsGetDests2(connection, dests)
+
+      # Get the destination from name with cupsGetDest
+      p_dest = FFI::Cups.cupsGetDest(name, nil, num_dests, dests.get_pointer(0))
+      dest = Cups::Struct::Destination.new(p_dest)
+      raise "Destination with name: #{name} not found!" if dest.null?
+
+      printer = Cups::Printer.new(dest[:name].dup, printer_options(dest))
+      cupsFreeDests(num_dests, dests)
+      return printer
     end
 
     private
@@ -64,42 +65,54 @@ module Cups
     # @param pointer [Pointer] pointer to the destinations
     # @return [Hash] hashmap of destination structs
     def self.cupsGetDests2(connection=nil, pointer)
-      count_destinations = FFI::Cups.cupsGetDests2(connection, pointer)
-      struct_size = Cups::Struct::Destination.size
-      destinations = {}
-      count_destinations.times do |index|
-        destination = Cups::Struct::Destination.new(pointer.get_pointer(0) + (struct_size * index))
-        destinations[index] = destination
+      num_dests = FFI::Cups.cupsGetDests2(connection, pointer)
+      size = Cups::Struct::Destination.size
+      destinations = []
+      num_dests.times do |i|
+        destination = Cups::Struct::Destination.new(pointer.get_pointer(0) + (size * i))
+        destinations.push(destination)
       end
       return destinations
     end
 
     # Returns a destination's options
-    # @param destination [Object] {Cups::Struct::Destination} object
-    # @return [Hash] hashmap of destination' options as {Cups::Struct::Option}
-    def self.cupsOptions(destination)
-      struct_size = Cups::Struct::Option.size
-      options = {}
+    # @param dest [Object] {Cups::Struct::Destination} object
+    # @return [Hash] hash of destination' options as {Cups::Struct::Option}
+    def self.cups_options(dest)
+      size = Cups::Struct::Option.size
+      options = []
 
-      destination[:num_options].times do |index|
-        option = Cups::Struct::Option.new(destination[:options] + (struct_size * index))
-        options[index] = option
+      dest[:num_options].times do |i|
+        option = Cups::Struct::Option.new(dest[:options] + (size * i))
+        options.push(option)
+      end
+      return options
+    end
+
+    # Returns a destination's options as hash
+    # @param dest [Object] {Cups::Struct::Destination} object
+    # @return [Hash] hash of destination' options
+    def self.printer_options(dest)
+      dest_opts = cups_options(dest)
+      options = {}
+      dest_opts.each do |o|
+        options[o[:name].dup] = o[:value].dup
       end
       return options
     end
 
     # Wrapper around {::FFI::Cups#cupsFreeDests}
-    # @param number_destinations [Integer]
+    # @param num_dests [Integer]
     # @param pointer [Pointer] pointer to the destinations
-    def self.cupsFreeDests(number_destinations, pointer)
-      FFI::Cups.cupsFreeDests(number_destinations, pointer.get_pointer(0))
+    def self.cupsFreeDests(num_dests, pointer)
+      FFI::Cups.cupsFreeDests(num_dests, pointer.get_pointer(0))
     end
 
     # Wrapper around {::FFI::Cups#cupsFreeOptions}
-    # @param number_options [Integer]
+    # @param num_opts [Integer]
     # @param pointer [Pointer] pointer to the options
-    def self.cupsFreeOptions(number_options, pointer)
-      FFI::Cups.cupsFreeOptions(number_options, pointer.get_pointer(0))
+    def self.cupsFreeOptions(num_opts, pointer)
+      FFI::Cups.cupsFreeOptions(num_opts, pointer.get_pointer(0))
     end
   end
 end
