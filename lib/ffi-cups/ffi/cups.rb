@@ -23,6 +23,14 @@ module FFI::Cups
   # {https://www.cups.org/doc/cupspm.html#cupsCheckDestSupported}
   attach_function 'cupsCheckDestSupported', [:pointer, :pointer, :pointer, :string, :string], :int, blocking: true
 
+  # Get the supported values/capabilities for the destination.
+  # @overload cupsCopyDestInfo(pointer, pointer)
+  #   @param http [Pointer]
+  #   @param dest [Pointer]
+  #   @return [Pointer] Destination information
+  # {https://www.cups.org/doc/cupspm.html#cupsCopyDestInfo}
+  attach_function 'cupsCopyDestInfo', [:pointer, :pointer], :pointer, blocking: true
+
   # Get the named destination from the list.
   # @overload cupsGetDest(string, string, int, pointer)
   #   @param name [String]
