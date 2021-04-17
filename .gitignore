@@ -1,8 +1,9 @@
-Gemfile.lock
 .bundle/
 log/
 pkg/
 *.gem
+
+Gemfile.lock
 
 # YARD
 .yardopts
