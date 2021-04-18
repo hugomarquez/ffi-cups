@@ -22,9 +22,8 @@ gem install ffi-cups
 ffi-cups requires libcups2 to be installed
 
 ## TODO
-- Job's state
+- Connection to not be a singleton class
 - Cancel jobs
-- Get all jobs with filters
 
 ## Example usage
 ```ruby
@@ -53,6 +52,18 @@ options = {
 }
 
 job = printer.print_file('/tmp/example.jpg', 'Title', options)
+# <Cups::Job:0x000055c87104d1e0 @id=10, @title="README", @printer="Virtual_PDF_Printer", @format="text/plain", @state=:processing, @size=4, @completed_time=1969-12-31 18:00:00 -0600, @creation_time=2021-04-18 17:35:04 -0500, @processing_time=2021-04-18 17:35:04 -0500> 
+
+# Get all jobs from a printer
+jobs = Cups::Job.get_jobs('Virtual_PDF_Printer')
+# [#<Cups::Job:0x0000563aa6359008 @id=1, @title="Test Print", @printer="Virtual_PDF_Printer", @format="text/plain", @state=:completed, @size=1, @completed_time=2021-04-08 07:06:23 -0500, @creation_time=2021-04-08 07:06:18 -0500, @processing_time=2021-04-08 07:06:18 -0500>, ...]
+
+# filtering job's query, see Constants file for more options
+jobs = Cups::Job.get_jobs('Virtual_PDF_Printer', Cups::CUPS_WHICHJOBS_ACTIVE)
+
+# Query job with id and printer's name
+job = Cups::Job.get_job(10, 'Virtual_PDF_Printer')
+# <Cups::Job:0x000055c870fc8490 @id=10, @title="README", @printer="Virtual_PDF_Printer", @format="text/plain", @state=:completed, @size=4, @completed_time=2021-04-18 17:35:04 -0500, @creation_time=2021-04-18 17:35:04 -0500, @processing_time=2021-04-18 17:35:04 -0500>
 
 ```
 
