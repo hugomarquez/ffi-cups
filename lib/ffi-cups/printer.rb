@@ -54,13 +54,14 @@ module Cups
       end
 
       job_id = FFI::Cups.cupsPrintFile2(http, @name, filename, title, num_options, p_options)
-      job = Cups::Job.new(job_id, title, self)
 
       if job_id.zero?
         last_error = Cups.cupsLastErrorString()
         self.class.cupsFreeOptions(num_options, p_options) unless options.empty?
         raise last_error
       end
+      #job = Cups::Job.new(job_id, title, @name)
+      job = Cups::Job.get_job(job_id, @name, 0, @connection)
 
       self.class.cupsFreeOptions(num_options, p_options) unless options.empty?
       self.class.cupsFreeDests(num_dests, dests)
