@@ -66,10 +66,12 @@ connection = Cups::Connection.instance('print.example.com')
 remote_printers = Cups::Printer.get_destinations(connection)
 
 ```
+## Documentation
+Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.1.9)
 
 ## TODO
 - Connection to not be a singleton class
-- Cancel jobs
+- Cancel jobs function
 
 ## Authors
 - Hugo Marquez @ www.hugomarquez.mx
