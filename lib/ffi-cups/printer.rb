@@ -1,12 +1,13 @@
 module Cups
   class Printer
-    attr_reader :name, :options
+    attr_reader :name, :options, :connection
 
     # @param name [String] printer's name
     # @param options [Hash] printer's options
-    def initialize(name, options={})
+    def initialize(name, options={}, connection=nil)
       @name = name
       @options = options
+      @connection = connection
     end
 
     # Returns the printer state
@@ -26,14 +27,55 @@ module Cups
       options['printer-state-reasons'].split(/,/)
     end
 
+    def print_file(filename, title, options={})
+      raise "File not found: #{filename}" unless File.exists? filename
+      
+      http = @connection.nil? ? nil : @connection.httpConnect2
+      # Get all destinations with cupsGetDests2
+      dests = FFI::MemoryPointer.new :pointer
+      num_dests = FFI::Cups.cupsGetDests2(http, dests)
+
+      # Get the destination from name with cupsGetDest
+      p_dest = FFI::Cups.cupsGetDest(@name, nil, num_dests, dests.get_pointer(0))
+      dest = Cups::Struct::Destination.new(p_dest)
+      raise "Destination with name: #{@name} not found!" if dest.null?
+
+      p_options = nil
+      num_options = 0
+      unless options.empty?
+        options.each do |k, v|
+          unless self.class.cupsCheckDestSupported(p_dest, k, v, http)
+            raise "Option:#{k} #{v if v} not supported for printer: #{@name}" 
+          end
+          p_options = FFI::MemoryPointer.new :pointer
+          num_options = FFI::Cups.cupsAddOption(k, v, num_options, p_options)
+        end
+        p_options = p_options.get_pointer(0)
+      end
+
+      job_id = FFI::Cups.cupsPrintFile2(http, @name, filename, title, num_options, p_options)
+      job = Cups::Job.new(job_id, title, self)
+
+      if job_id.zero?
+        last_error = Cups.cupsLastErrorString()
+        self.class.cupsFreeOptions(num_options, p_options)
+        raise last_error
+      end
+
+      self.class.cupsFreeOptions(num_options, p_options) unless options.empty?
+      self.class.cupsFreeDests(num_dests, dests)
+      Cups::Connection.close(http)
+      return job
+    end
+
     # Get all destinations (printer devices)
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     def self.get_destinations(connection=nil)
       pointer = FFI::MemoryPointer.new :pointer
-      dests = cupsGetDests2(connection, pointer)
+      dests = cupsGetDests2(pointer, connection)
       printers = []
       dests.each do |d|
-        printer = Cups::Printer.new(d[:name].dup, printer_options(d))
+        printer = Cups::Printer.new(d[:name].dup, printer_options(d), connection)
         printers.push(printer)
       end
       cupsFreeDests(dests.count, pointer)
@@ -45,17 +87,19 @@ module Cups
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @return [Printer] a printer object
     def self.get_destination(name, connection=nil)
+      http = connection.nil? ? nil : connection.httpConnect2
       # Get all destinations with cupsGetDests2
       dests = FFI::MemoryPointer.new :pointer
-      num_dests = FFI::Cups.cupsGetDests2(connection, dests)
+      num_dests = FFI::Cups.cupsGetDests2(http, dests)
 
       # Get the destination from name with cupsGetDest
       p_dest = FFI::Cups.cupsGetDest(name, nil, num_dests, dests.get_pointer(0))
       dest = Cups::Struct::Destination.new(p_dest)
       raise "Destination with name: #{name} not found!" if dest.null?
 
-      printer = Cups::Printer.new(dest[:name].dup, printer_options(dest))
+      printer = Cups::Printer.new(dest[:name].dup, printer_options(dest), connection)
       cupsFreeDests(num_dests, dests)
+      Cups::Connection.close(http) if http
       return printer
     end
 
@@ -64,24 +108,26 @@ module Cups
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @param pointer [Pointer] pointer to the destinations
     # @return [Hash] hashmap of destination structs
-    def self.cupsGetDests2(connection=nil, pointer)
-      num_dests = FFI::Cups.cupsGetDests2(connection, pointer)
+    def self.cupsGetDests2(pointer, connection=nil)
+      http = connection.nil? ? nil : connection.httpConnect2
+      num_dests = FFI::Cups.cupsGetDests2(http, pointer)
       size = Cups::Struct::Destination.size
       destinations = []
       num_dests.times do |i|
         destination = Cups::Struct::Destination.new(pointer.get_pointer(0) + (size * i))
         destinations.push(destination)
       end
+      Cups::Connection.close(http) if http
       return destinations
     end
 
     # Wrapper around {::FFI::Cups#cupsCheckDestSupported}
-    # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @param dest [Pointer] pointer to the destination
     # @param option [String]
     # @param value [String]
+    # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @return [Boolean] true if supported, false otherwise
-    def self.cupsCheckDestSupported(connection=nil, dest, option, value)
+    def self.cupsCheckDestSupported(dest, option, value, connection=nil)
       info = FFI::Cups.cupsCopyDestInfo(connection, dest)
       i = FFI::Cups.cupsCheckDestSupported(connection, dest, info, option, value)
       return !i.zero?
