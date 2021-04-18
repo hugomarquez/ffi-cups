@@ -14,7 +14,8 @@ module Cups
     end
 
     # Returns or creates a singleton instance
-    # @param args [Hash] hash argument with hostname and port
+    # @param hostname [String]
+    # @param port [Integer]
     # @return [Object] a connection object
     def self.instance(hostname, port=nil)
       return @instance if @instance
