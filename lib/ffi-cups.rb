@@ -36,4 +36,5 @@ require 'ffi-cups/ffi/array'
 
 # wrappers
 require 'ffi-cups/connection'
+require 'ffi-cups/job'
 require 'ffi-cups/printer'
