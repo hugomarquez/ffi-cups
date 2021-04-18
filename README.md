@@ -22,17 +22,22 @@ gem install ffi-cups
 ffi-cups requires libcups2 to be installed
 
 ## TODO
-- send print jobs by creating the job itself first.
+- Job's state
+- Cancel jobs
+- Get all jobs with filters
 
 ## Example usage
 ```ruby
 require 'ffi-cups'
 
 printers = Cups::Printer.get_destinations
-# [#<Cups::Printer:0x000055fe50b178e0 @name="HP_Officejet_J4500_series_ubuntu", @options={"device-uri"=>"ipps://HP%20Officejet%20J4500%20series%20%40%20ubuntu._ipps._tcp.local/cups", "printer-info"=>"HP Officejet J4500 series @ ubuntu", "printer-location"=>"", "printer-make-and-model"=>"HP Officejet j4585 All-in-one Printer", "printer-type"=>"16814110"}>, #<Cups::Printer:0x000055fe50b15798 @name="Virtual_PDF_Printer", @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3", "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", "job-priority"=>"50", "job-sheets"=>"none,none", "marker-change-time"=>"0", "number-up"=>"1", "printer-commands"=>"AutoConfigure,Clean,PrintSelfTestPage", "printer-info"=>"Virtual PDF Printer", "printer-is-accepting-jobs"=>"true", "printer-is-shared"=>"false", "printer-is-temporary"=>"false", "printer-location"=>"", "printer-make-and-model"=>"Generic CUPS-PDF Printer (w/ options)", "printer-state"=>"3", "printer-state-change-time"=>"1617884232", "printer-state-reasons"=>"none", "printer-type"=>"10547276", "printer-uri-supported"=>"ipp://localhost/printers/Virtual_PDF_Printer"}>]
+# [#<Cups::Printer:0x000055fe50b15798 @name="Virtual_PDF_Printer",
+#  @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3" 
+#  "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", ...
 
 printer = Cups::Printer.get_destination("Virtual_PDF_Printer")
-# #<Cups::Printer:0x0000560f1d4e0958 @name="Virtual_PDF_Printer", @options={"copies"=>"1", "device-uri"=>"cups-pdf:/", "finishings"=>"3", "job-cancel-after"=>"10800", "job-hold-until"=>"no-hold", "job-priority"=>"50", "job-sheets"=>"none,none", "marker-change-time"=>"0", "number-up"=>"1", "printer-commands"=>"AutoConfigure,Clean,PrintSelfTestPage", "printer-info"=>"Virtual PDF Printer", "printer-is-accepting-jobs"=>"true", "printer-is-shared"=>"false", "printer-is-temporary"=>"false", "printer-location"=>"", "printer-make-and-model"=>"Generic CUPS-PDF Printer (w/ options)", "printer-state"=>"3", "printer-state-change-time"=>"1617884232", "printer-state-reasons"=>"none", "printer-type"=>"10547276", "printer-uri-supported"=>"ipp://localhost/printers/Virtual_PDF_Printer"}> 
+# <Cups::Printer:0x0000560f1d4e0958 @name="Virtual_PDF_Printer", @options={"copies"=>"1" 
+#   "device-uri"=>"cups-pdf:/", ...
 
 printer.state
 # :idle 
@@ -40,26 +45,27 @@ printer.state
 printer.state_reasons
 # ["none"]
 
+# Print a file (PDF, JPG, etc) you can pass a hash of printing options if you
+# want to override the printer's default. See Cups::Constants for more options
+options = {
+  Cups::CUPS_MEDIA => Cups::CUPS_MEDIA_A4,
+  Cups::CUPS_ORIENTATION => Cups::CUPS_ORIENTATION_LANDSCAPE
+}
+
+job = printer.print_file('/tmp/example.jpg', 'Title', options)
+
 ```
 
 ## Remote CUPS Server
 You may create a connection object passing a :hostname and/or :port arguments.
 
-You are in charge of the connection object, remember to close the 
-connection once you stop using it.
-
 ```ruby
 # Create a Connection object with hostname and/or port
-connection = Cups::Connection.instance(hostname:'print.example.com')
-
-# Create a http pointer with CUPS API
-http = connection.httpConnect2
+connection = Cups::Connection.instance('print.example.com')
 
 # Get all printers from the remote connection
-remote_printers = Cups::Printer.get_destinations(http)
+remote_printers = Cups::Printer.get_destinations(connection)
 
-# Close connection
-Cups::Connection.close(http)
 ```
 
 ## License
