@@ -43,11 +43,11 @@ module Cups
       p_options = nil
       num_options = 0
       unless options.empty?
+        p_options = FFI::MemoryPointer.new :pointer
         options.each do |k, v|
           unless self.class.cupsCheckDestSupported(p_dest, k, v, http)
             raise "Option:#{k} #{v if v} not supported for printer: #{@name}" 
           end
-          p_options = FFI::MemoryPointer.new :pointer
           num_options = FFI::Cups.cupsAddOption(k, v, num_options, p_options)
         end
         p_options = p_options.get_pointer(0)
@@ -58,7 +58,7 @@ module Cups
 
       if job_id.zero?
         last_error = Cups.cupsLastErrorString()
-        self.class.cupsFreeOptions(num_options, p_options)
+        self.class.cupsFreeOptions(num_options, p_options) unless options.empty?
         raise last_error
       end
 
@@ -170,7 +170,7 @@ module Cups
     # @param num_opts [Integer]
     # @param pointer [Pointer] pointer to the options
     def self.cupsFreeOptions(num_opts, pointer)
-      FFI::Cups.cupsFreeOptions(num_opts, pointer.get_pointer(0))
+      FFI::Cups.cupsFreeOptions(num_opts, pointer)
     end
   end
 end
