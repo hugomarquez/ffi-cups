@@ -8,19 +8,19 @@ module Cups
 
     private_class_method :new
 
-    def initialize(args={})
-      @hostname = args.fetch(:hostname) { Cups::CUPS_HTTP_DEFAULT }
-      @port = args.fetch(:port) { 631 }
+    def initialize(hostname, port=nil)
+      @hostname = hostname
+      @port = port.nil? ? 631 : port
     end
 
     # Returns or creates a singleton instance
     # @param args [Hash] hash argument with hostname and port
     # @return [Object] a connection object
-    def self.instance(args)
+    def self.instance(hostname, port=nil)
       return @instance if @instance
 
       @instance_mutex.synchronize do 
-        @instance ||= new(args)
+        @instance ||= new(hostname, port)
       end
 
       @instance
@@ -49,8 +49,7 @@ module Cups
     # Wrapper around {::FFI::Cups::Http#httpClose}
     # @param http (Pointer)
     def self.close(http)
-      FFI::Cups::Http.httpClose(pointer)
-      pointer.autorelease = true
+      FFI::Cups::Http.httpClose(http)
     end
   end
 end
