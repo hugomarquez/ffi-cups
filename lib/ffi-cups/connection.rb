@@ -3,30 +3,12 @@ module Cups
     extend Gem::Deprecate
 
     attr_accessor :hostname, :port
-    
-    @instance_mutex = Mutex.new
-
-    private_class_method :new
 
     def initialize(hostname, port=nil)
       @hostname = hostname
       @port = port.nil? ? 631 : port
     end
-
-    # Returns or creates a singleton instance
-    # @param hostname [String]
-    # @param port [Integer]
-    # @return [Object] a connection object
-    def self.instance(hostname, port=nil)
-      return @instance if @instance
-
-      @instance_mutex.synchronize do 
-        @instance ||= new(hostname, port)
-      end
-
-      @instance
-    end
-    
+        
     # Wrapper around {::FFI::Cups::Http#httpConnectEncrypt}
     # @deprecated Use {#httpConnect2} instead
     # @return [Pointer] a http pointer 
