@@ -94,14 +94,17 @@ module FFI::Cups
   # @overload cupsCancelJob(string, int)
   #   @param name [String] of the destination
   #   @param id [Ingeger] of the job
-  attach_function 'cupsCancelJob', [:string, :int], :void, blocking: true
+  #   @return [Integer] 1 if canceled, 0 otherwise
+  attach_function 'cupsCancelJob', [:string, :int], :int, blocking: true
 
   # Cancel a job on a destination
   # @overload cupsCancelJob2(pointer, string, int)
   #   @param pointer [Pointer] of the http connection
   #   @param name [String] of the destination
   #   @param id [Ingeger] of the job
-  attach_function 'cupsCancelJob2', [:pointer, :string, :int], :void, blocking: true
+  #   @param purge [Integer] 1 to purge, 0 to cancel
+  #   @return [Enum] Cups::Enun::IPP::Status
+  attach_function 'cupsCancelJob2', [:pointer, :string, :int, :int], Cups::Enum::IPP::Status, blocking: true
 
   # Get the jobs from a connection
   # @overload cupsGetJobs2(pointer, pointer, string, int, int)
