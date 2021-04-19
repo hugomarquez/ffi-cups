@@ -52,7 +52,6 @@ jobs = Cups::Job.get_jobs('Virtual_PDF_Printer', Cups::CUPS_WHICHJOBS_ACTIVE)
 # Query job with id and printer's name
 job = Cups::Job.get_job(10, 'Virtual_PDF_Printer')
 # <Cups::Job:0x000055c870fc8490 @id=10, @title="README", @printer="Virtual_PDF_Printer", @format="text/plain", @state=:completed, @size=4, @completed_time=2021-04-18 17:35:04 -0500, @creation_time=2021-04-18 17:35:04 -0500, @processing_time=2021-04-18 17:35:04 -0500>
-
 ```
 
 ## Remote CUPS Server
@@ -60,12 +59,12 @@ You may create a connection object passing a :hostname and/or :port arguments.
 
 ```ruby
 # Create a Connection object with hostname and/or port
-connection = Cups::Connection.instance('print.example.com')
+connection = Cups::Connection.new('print.example.com')
 
 # Get all printers from the remote connection
 remote_printers = Cups::Printer.get_destinations(connection)
-
 ```
+
 ## Documentation
 Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.1.9)
 
