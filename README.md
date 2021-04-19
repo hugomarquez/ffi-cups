@@ -66,7 +66,7 @@ remote_printers = Cups::Printer.get_destinations(connection)
 ```
 
 ## Documentation
-Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.1.9)
+Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.2.1)
 
 ## Authors
 - Hugo Marquez @ www.hugomarquez.mx
