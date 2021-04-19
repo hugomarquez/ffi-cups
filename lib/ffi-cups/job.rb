@@ -10,6 +10,23 @@ module Cups
       @printer = printer
     end
 
+    # get a updated job's state
+    # @param connection [Cups::Connection]
+    # @return [Symbol] job's state
+    def status(connection=nil)
+      job = self.class.get_job(@id, @printer, -1, connection)
+      self.state = job.state if job
+    end
+
+    # Cancel or purge a job
+    # @param connection [Cups::Connection]
+    def cancel(purge=0, connection=nil)
+      job = self.class.get_job(@id, @printer, -1, connection)
+      r = FFI::Cups.cupsCancelJob2(connection, @printer, @id, purge)
+      raise FFI::Cups.cupsLastErrorString() if r == 0
+      return r
+    end
+
     # Get jobs by filter or destination name
     # @param name [String]
     # @param filter [Integer] see Constants
@@ -43,6 +60,7 @@ module Cups
       jobs.each do |j|
         return j if j.id == id
       end
+      raise "Job with id: #{id} not found!"
     end
 
     private
