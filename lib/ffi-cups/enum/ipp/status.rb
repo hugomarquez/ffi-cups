@@ -1,7 +1,6 @@
 module Cups::Enum
   module IPP
     extend FFI::Library
-
     Status = enum [
       :ipp_ok, 0,
       :ipp_ok_subst,

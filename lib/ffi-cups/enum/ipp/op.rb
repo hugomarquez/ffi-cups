@@ -1,7 +1,6 @@
 module Cups::Enum
   module IPP
     extend FFI::Library
-
     Op = enum [
       :ipp_print_job, 0x0002,
       :ipp_print_uri,
