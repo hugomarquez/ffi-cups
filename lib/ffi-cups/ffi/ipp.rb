@@ -38,7 +38,7 @@ module FFI::Cups
     #   @param name [String]
     #   @param ipp_tag_t type [Cups::Enum::IPP::Tag]
     #   @return [Pointer] pointer to a ipp_attribute_t
-    attach_function 'ippFindAttribute', [:pointer, :strting, Cups::Enum::IPP::Tag], :pointer, blocking: true
+    attach_function 'ippFindAttribute', [:pointer, :string, Cups::Enum::IPP::Tag], :pointer, blocking: true
 
     # Get the attribute name.
     # @overload ippGetName(pointer)
