@@ -68,6 +68,11 @@ remote_printers = Cups::Printer.get_destinations(connection)
 ## Documentation
 Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.2.1)
 
+## TODO
+- Create OP Enum: https://www.cups.org/doc/cupspm.html#ipp_op_e
+- Create Tag Enum: https://www.cups.org/doc/cupspm.html#ipp_tag_e
+- Create FFI for ipp
+
 ## Authors
 - Hugo Marquez @ www.hugomarquez.mx
 - Contributors @ https://github.com/hugomarquez/ffi-cups/graphs/contributors
