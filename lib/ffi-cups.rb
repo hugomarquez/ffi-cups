@@ -23,6 +23,8 @@ require 'ffi-cups/enum/http/status'
 # IPP
 require 'ffi-cups/enum/ipp/status'
 require 'ffi-cups/enum/ipp/job_state'
+require 'ffi-cups/enum/ipp/op'
+require 'ffi-cups/enum/ipp/tag'
 
 # Structs
 require 'ffi-cups/struct/option'
@@ -33,6 +35,7 @@ require 'ffi-cups/struct/job'
 require 'ffi-cups/ffi/cups'
 require 'ffi-cups/ffi/http'
 require 'ffi-cups/ffi/array'
+require 'ffi-cups/ffi/ipp'
 
 # wrappers
 require 'ffi-cups/connection'
