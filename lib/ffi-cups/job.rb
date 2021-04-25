@@ -63,6 +63,36 @@ module Cups
       raise "Job with id: #{id} not found!"
     end
 
+    def self.ipp_get_job()
+      con = Cups::Connection.new('192.168.15.90')
+      http = con.httpConnect2
+      uri = "ipp://192.168.15.90:631/printers/HP_Officejet_J4500_series"
+      request = FFI::Cups::Ipp.ippNewRequest(Cups::Enum::IPP::Op[:ipp_get_job_attributes])
+      op_tag = Cups::Enum::IPP::Tag[:ipp_tag_operation]
+      name_tag = Cups::Enum::IPP::Tag[:ipp_tag_name]
+      uri_tag = Cups::Enum::IPP::Tag[:ipp_tag_uri]
+      int_tag = Cups::Enum::IPP::Tag[:ipp_tag_integer]
+
+      FFI::Cups::Ipp.ippAddString(request, op_tag, name_tag, 'requesting-user-name', nil, 'bauser')
+      FFI::Cups::Ipp.ippAddString(request, op_tag, uri_tag, 'printer-uri', nil, uri)
+      FFI::Cups::Ipp.ippAddInteger(request, op_tag, int_tag, 'job-id', 10)
+      
+      response = FFI::Cups::Ipp.cupsDoRequest(http, request, '/')
+      att = FFI::Cups::Ipp.ippFirstAttribute(response)
+      until att.null?
+        name = FFI::Cups::Ipp.ippGetName(att)
+        
+        if(name == "job-impressions-completed")
+          sheets = FFI::Cups::Ipp.ippGetInteger(att, 0)
+          puts sheets
+          #puts FFI::Cups.cupsLastErrorString if sheets == 0
+        end
+
+        att = FFI::Cups::Ipp.ippNextAttribute(response)
+      end
+
+    end
+
     private
     # Wrapper {::FFI::Cups#cupsGetJobs2}
     # @param pointer [Pointer] pointer to the jobs
