@@ -73,7 +73,6 @@ module Cups
       uri_tag = Cups::Enum::IPP::Tag[:ipp_tag_uri]
       int_tag = Cups::Enum::IPP::Tag[:ipp_tag_integer]
 
-      FFI::Cups::Ipp.ippAddString(request, op_tag, name_tag, 'requesting-user-name', nil, 'bauser')
       FFI::Cups::Ipp.ippAddString(request, op_tag, uri_tag, 'printer-uri', nil, uri)
       FFI::Cups::Ipp.ippAddInteger(request, op_tag, int_tag, 'job-id', 10)
       
