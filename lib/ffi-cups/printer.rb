@@ -17,7 +17,7 @@ module Cups
       when '3' then :idle
       when '4' then :printing
       when '5' then :stopped
-      else :unkown
+      else :unknown
       end
     end
 
