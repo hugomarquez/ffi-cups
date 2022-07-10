@@ -35,8 +35,8 @@ printer.state_reasons
 # Print a file (PDF, JPG, etc) you can pass a hash of printing options if you
 # want to override the printer's default. See Cups::Constants for more options
 options = {
-  Cups::CUPS_MEDIA => Cups::CUPS_MEDIA_A4,
-  Cups::CUPS_ORIENTATION => Cups::CUPS_ORIENTATION_LANDSCAPE
+  Cups::MEDIA => Cups::MEDIA_A4,
+  Cups::ORIENTATION => Cups::ORIENTATION_LANDSCAPE
 }
 
 job = printer.print_file('/tmp/example.jpg', 'Title', options)
@@ -47,7 +47,7 @@ jobs = Cups::Job.get_jobs('Virtual_PDF_Printer')
 # [#<Cups::Job:0x0000563aa6359008 @id=1, @title="Test Print", @printer="Virtual_PDF_Printer", @format="text/plain", @state=:completed, @size=1, @completed_time=2021-04-08 07:06:23 -0500, @creation_time=2021-04-08 07:06:18 -0500, @processing_time=2021-04-08 07:06:18 -0500>, ...]
 
 # filtering job's query, see Constants file for more options
-jobs = Cups::Job.get_jobs('Virtual_PDF_Printer', Cups::CUPS_WHICHJOBS_ACTIVE)
+jobs = Cups::Job.get_jobs('Virtual_PDF_Printer', Cups::WHICHJOBS_ACTIVE)
 
 # Query job with id and printer's name
 job = Cups::Job.get_job(10, 'Virtual_PDF_Printer')
@@ -75,7 +75,7 @@ Check out the documentation - [docs](https://www.rubydoc.info/gems/ffi-cups/0.2.
 ## License
 The MIT License
 
-Copyright (c) 2021 Hugo Marquez & Contributors
+Copyright (c) 2022 Hugo Marquez & Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

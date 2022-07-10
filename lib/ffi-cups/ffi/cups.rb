@@ -2,11 +2,11 @@
 # {https://www.cups.org/doc/cupspm.html Programming Manual}
 # {https://github.com/apple/cups/blob/master/cups/cups.h cups.h source}
 
-module FFI::Cups
+module Cups
   extend FFI::Library
-
-  ffi_lib('cups')
   
+  ffi_lib(Cups.libcups)
+
   # Get the current encryption settings.
   # @return [Integer] encryption settings
   # {https://www.cups.org/doc/cupspm.html#cupsEncryption}

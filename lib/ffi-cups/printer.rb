@@ -33,10 +33,10 @@ module Cups
       http = @connection.nil? ? nil : @connection.httpConnect2
       # Get all destinations with cupsGetDests2
       dests = FFI::MemoryPointer.new :pointer
-      num_dests = FFI::Cups.cupsGetDests2(http, dests)
+      num_dests = Cups.cupsGetDests2(http, dests)
 
       # Get the destination from name with cupsGetDest
-      p_dest = FFI::Cups.cupsGetDest(@name, nil, num_dests, dests.get_pointer(0))
+      p_dest = Cups.cupsGetDest(@name, nil, num_dests, dests.get_pointer(0))
       dest = Cups::Struct::Destination.new(p_dest)
       raise "Destination with name: #{@name} not found!" if dest.null?
 
@@ -48,12 +48,12 @@ module Cups
           unless self.class.cupsCheckDestSupported(p_dest, k, v, http)
             raise "Option:#{k} #{v if v} not supported for printer: #{@name}" 
           end
-          num_options = FFI::Cups.cupsAddOption(k, v, num_options, p_options)
+          num_options = Cups.cupsAddOption(k, v, num_options, p_options)
         end
         p_options = p_options.get_pointer(0)
       end
 
-      job_id = FFI::Cups.cupsPrintFile2(http, @name, filename, title, num_options, p_options)
+      job_id = Cups.cupsPrintFile2(http, @name, filename, title, num_options, p_options)
 
       if job_id.zero?
         last_error = Cups.cupsLastErrorString()
@@ -91,10 +91,10 @@ module Cups
       http = connection.nil? ? nil : connection.httpConnect2
       # Get all destinations with cupsGetDests2
       dests = FFI::MemoryPointer.new :pointer
-      num_dests = FFI::Cups.cupsGetDests2(http, dests)
+      num_dests = Cups.cupsGetDests2(http, dests)
 
       # Get the destination from name with cupsGetDest
-      p_dest = FFI::Cups.cupsGetDest(name, nil, num_dests, dests.get_pointer(0))
+      p_dest = Cups.cupsGetDest(name, nil, num_dests, dests.get_pointer(0))
       dest = Cups::Struct::Destination.new(p_dest)
       raise "Destination with name: #{name} not found!" if dest.null?
 
@@ -105,13 +105,13 @@ module Cups
     end
 
     private
-    # Wrapper around {::FFI::Cups#cupsGetDests2}
+    # Wrapper around {::Cups#cupsGetDests2}
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @param pointer [Pointer] pointer to the destinations
     # @return [Hash] hashmap of destination structs
     def self.cupsGetDests2(pointer, connection=nil)
       http = connection.nil? ? nil : connection.httpConnect2
-      num_dests = FFI::Cups.cupsGetDests2(http, pointer)
+      num_dests = Cups.cupsGetDests2(http, pointer)
       size = Cups::Struct::Destination.size
       destinations = []
       num_dests.times do |i|
@@ -122,15 +122,15 @@ module Cups
       return destinations
     end
 
-    # Wrapper around {::FFI::Cups#cupsCheckDestSupported}
+    # Wrapper around {::Cups#cupsCheckDestSupported}
     # @param dest [Pointer] pointer to the destination
     # @param option [String]
     # @param value [String]
     # @param connection [Pointer] http pointer from {Cups::Connection#httpConnect2}
     # @return [Boolean] true if supported, false otherwise
     def self.cupsCheckDestSupported(dest, option, value, connection=nil)
-      info = FFI::Cups.cupsCopyDestInfo(connection, dest)
-      i = FFI::Cups.cupsCheckDestSupported(connection, dest, info, option, value)
+      info = Cups.cupsCopyDestInfo(connection, dest)
+      i = Cups.cupsCheckDestSupported(connection, dest, info, option, value)
       return !i.zero?
     end
 
@@ -160,18 +160,18 @@ module Cups
       return options
     end
 
-    # Wrapper around {::FFI::Cups#cupsFreeDests}
+    # Wrapper around {::Cups#cupsFreeDests}
     # @param num_dests [Integer]
     # @param pointer [Pointer] pointer to the destinations
     def self.cupsFreeDests(num_dests, pointer)
-      FFI::Cups.cupsFreeDests(num_dests, pointer.get_pointer(0))
+      Cups.cupsFreeDests(num_dests, pointer.get_pointer(0))
     end
 
-    # Wrapper around {::FFI::Cups#cupsFreeOptions}
+    # Wrapper around {::Cups#cupsFreeOptions}
     # @param num_opts [Integer]
     # @param pointer [Pointer] pointer to the options
     def self.cupsFreeOptions(num_opts, pointer)
-      FFI::Cups.cupsFreeOptions(num_opts, pointer)
+      Cups.cupsFreeOptions(num_opts, pointer)
     end
   end
 end

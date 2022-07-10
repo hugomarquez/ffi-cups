@@ -1,8 +1,8 @@
-module FFI::Cups
+module Cups
   module Array
     extend FFI::Library
     
-    ffi_lib('cups')
+    ffi_lib(Cups.libcups)
     
     # @overload cupsArrayFirst(pointer)
     #   @param pointer [Pointer] to _cups_array_s struct

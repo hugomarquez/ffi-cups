@@ -1,8 +1,8 @@
-module FFI::Cups
+module Cups
   module Http
     extend FFI::Library
-
-    ffi_lib('cups')
+    
+    ffi_lib(Cups.libcups)
 
     # @overload httpConnectEncrypt(string, int, int)
     #   @param hostname [String]
@@ -30,7 +30,7 @@ module FFI::Cups
     #   @param port [Integer]
     #   @param addrlist [Pointer] can be NULL
     #   @param family [Integer] (AF_UNSPEC=0)
-    #   @param encryption_settings [Integer] from FFI::Cups.cupsEncryption()
+    #   @param encryption_settings [Integer] from Cups.cupsEncryption()
     #   @param blocking [Integer]
     #   @param msec [Integer] use 5000 or less
     #   @param cancel[Pointer] integer pointer, can be NULL

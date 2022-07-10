@@ -22,8 +22,8 @@ module Cups
     # @param connection [Cups::Connection]
     def cancel(purge=0, connection=nil)
       job = self.class.get_job(@id, @printer, -1, connection)
-      r = FFI::Cups.cupsCancelJob2(connection, @printer, @id, purge)
-      raise FFI::Cups.cupsLastErrorString() if r == 0
+      r = Cups.cupsCancelJob2(connection, @printer, @id, purge)
+      raise Cups.cupsLastErrorString() if r == 0
       return r
     end
 
@@ -64,7 +64,7 @@ module Cups
     end
 
     private
-    # Wrapper {::FFI::Cups#cupsGetJobs2}
+    # Wrapper {::Cups#cupsGetJobs2}
     # @param pointer [Pointer] pointer to the jobs
     # @param name [String] name of the destination or NULL
     # @param filter [Integer] see Constants for more filters
@@ -72,7 +72,7 @@ module Cups
     # @return [Array] array of job structs
     def self.cupsGetJobs2(pointer, name=nil, filter=-1, connection=nil)
       http = connection.nil? ? nil : connection.httpConnect2
-      num_jobs = FFI::Cups.cupsGetJobs2(http, pointer, name, 0, filter)
+      num_jobs = Cups.cupsGetJobs2(http, pointer, name, 0, filter)
       size = Cups::Struct::Job.size
       jobs = []
       

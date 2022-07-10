@@ -2,17 +2,16 @@ require 'ffi'
 require 'byebug'
 
 module Cups
-  extend FFI::Library
 
-  begin
+  # Custom or default path for libcups.so
+  def self.libcups
     if ENV['CUPS_LIB']
-      ffi_lib(ENV['CUPS_LIB'])
+      ENV['CUPS_LIB']
     else
-      ffi_lib('cups')
+      'cups'
     end
-  rescue LoadError => e
-    raise LoadError, "Didn't find libcups on your system."
   end
+
 end
 
 # Constants
