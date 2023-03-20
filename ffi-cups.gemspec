@@ -25,5 +25,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # development dependencies
-  s.add_development_dependency 'byebug'
+  s.add_development_dependency 'byebug', '~> 11.1.3'
 end
