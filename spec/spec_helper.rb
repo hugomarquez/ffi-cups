@@ -1,5 +1,4 @@
 require "bundler/setup"
-require 'byebug'
 require "cups_ffi"
 
 RSpec.configure do |config|
