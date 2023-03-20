@@ -1,5 +1,4 @@
 require 'ffi'
-require 'byebug'
 
 module Cups
 
