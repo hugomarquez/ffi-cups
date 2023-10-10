@@ -28,7 +28,7 @@ module Cups
     end
 
     def print_file(filename, title, options={})
-      raise "File not found: #{filename}" unless File.exists? filename
+      raise "File not found: #{filename}" unless File.exist? filename
       
       http = @connection.nil? ? nil : @connection.httpConnect2
       # Get all destinations with cupsGetDests2
